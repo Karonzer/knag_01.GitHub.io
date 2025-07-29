@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="application/octet-stream; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>온라인교실</title>
+    <link rel="stylesheet" href="TemplateData/style.css">
+</head>
+<body>
+    <div class="safe-area">
+        <div id="unity-container" class="unity-desktop">
+            <canvas id="unity-canvas"></canvas>
+            <div id="LoadingWindow">
+                <img id="LoadingBG" src="TemplateData/title.webp" />
+
+                <div id="LoadingBG">
+                    <div id="LoadingBarContainer">
+                        <div id="LoadingBarBackground">
+                            <div id="LoadingText">로딩 중..</div>
+                            <div id="bar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <script>
+        var buildUrl = "Build";
+        var loaderUrl = buildUrl + "/boom.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/boom.data",
+            frameworkUrl: buildUrl + "/boom.framework.js",
+            codeUrl: buildUrl + "/boom.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "",
+            productName: "",
+            productVersion: "0.0.1",
+            autoSyncPersistentDataPath: true
+        };
+
+
+        var canvas = document.querySelector("#unity-canvas");
+        var script = document.createElement("script");
+
+        var loading = document.querySelector("#LoadingWindow");
+        var bar = document.querySelector('#bar');
+
+        var unityInstance = null;
+        function progressFun(per) {
+            bar.style.width = parseInt(100 * per) + '%';
+        }
+
+        config.matchWebGLToCanvasSize = true;
+        script.src = loaderUrl;
+        script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {
+                progressFun(progress);
+          }).then((instance) => {
+              unityInstance = instance;
+              loading.classList.add("fade-out");
+              setTimeout(() => {
+                  loading.style.display = "none";
+              }, 500); // transition 시간과 동일하게 맞춤 (0.5초)
+          }).catch((message) => {
+            alert(message);
+          });
+        };
+        document.body.appendChild(script);
+        </script>
+</body>
+</html>
